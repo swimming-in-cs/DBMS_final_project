@@ -44,7 +44,7 @@ try {
         if ($result) {
             // 輸出查詢結果
             while ($row = $result->fetch_assoc()) {
-                $searchResults .= "Name: " . htmlspecialchars($row["player_name"]) . " - number of wins: " . htmlspecialchars($row["cnt"]) . "<br>";
+                $searchResults .= "Name: " . htmlspecialchars($row["player_name"]) . " - Number of wins: " . htmlspecialchars($row["cnt"]) . "<br>";
             }
         } else {
             $searchResults = "Query failed: " . $db->error;
@@ -76,7 +76,7 @@ $db->close();
             <!-- Navigation-->
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
                 <div class="container px-5">
-                    <a class="navbar-brand" href="index.php">Start Bootstrap</a>
+                    <a class="navbar-brand" href="index.php">Best Player Search</a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
@@ -84,21 +84,9 @@ $db->close();
                             <li class="nav-item"><a class="nav-link" href="match.php">Match</a></li>
                             <li class="nav-item"><a class="nav-link" href="best_player.php">Best Player</a></li>
                             <li class="nav-item"><a class="nav-link" href="customize.php">Customize</a></li>
-                            <li class="nav-item"><a class="nav-link" href="dream_team.php">Dream team</a></li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" id="navbarDropdownBlog" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Blog</a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownBlog">
-                                    <li><a class="dropdown-item" href="blog-home.html">Blog Home</a></li>
-                                    <li><a class="dropdown-item" href="blog-post.html">Blog Post</a></li>
-                                </ul>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" id="navbarDropdownPortfolio" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Portfolio</a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownPortfolio">
-                                    <li><a class="dropdown-item" href="portfolio-overview.html">Portfolio Overview</a></li>
-                                    <li><a class="dropdown-item" href="portfolio-item.html">Portfolio Item</a></li>
-                                </ul>
-                            </li>
+                            <li class="nav-item"><a class="nav-link" href="Search_Player.php">Search Player</a></li>
+                            <li class="nav-item"><a class="nav-link" href="Insert.php">Insert Player</a></li>
+                            <li class="nav-item"><a class="nav-link" href="Delete.php">Delete Player</a></li>
                         </ul>
                     </div>
                 </div>
