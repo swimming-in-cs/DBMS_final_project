@@ -1,3 +1,62 @@
+<?php
+// Enable error reporting for mysqli
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+// Initialize variables
+$searchResults = '';
+$isPost = $_SERVER["REQUEST_METHOD"] == "POST";
+
+// 連接資料庫
+try {
+    $db = new mysqli("localhost:3307", "user", "", "final");
+
+    // 檢查資料庫連接是否成功
+    if ($db->connect_error) {
+        throw new Exception("Connection failed: " . $db->connect_error);
+    }
+
+    // 確認是否有 POST 請求
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        // 取得輸入的名字
+        $height = $_POST['height'];
+        $handPreference = $_POST['handPreference'];
+        $sql="Select player.player_name, player.player_ht, count(*) as cnt
+                From matches, player, tournerment
+                where matches.winner_id=player.player_id
+                and matches.tourney_id=tournerment.tourney_id
+                and abs(player_ht - ?) <= 3 
+                and player_hand = ?
+                Group by player_name
+                order by cnt desc
+                limit 3;";
+        // 執行 SQL 查詢，使用预处理语句来防止 SQL 注入
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("is", $height, $handPreference);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        // 檢查查詢是否成功
+        if ($result) {
+            // 輸出查詢結果
+            while ($row = $result->fetch_assoc()) {
+                $searchResults .= "Name: " . htmlspecialchars($row["player_name"]) . " - Player Height: " . htmlspecialchars($row["player_ht"]) . " - Number of wins: " . htmlspecialchars($row["cnt"]) .  "<br>";
+            }
+        } else {
+            $searchResults = "Query failed: " . $db->error;
+        }
+        // 釋放查詢結果集
+        $result->free();
+        // 關閉预处理语句
+        $stmt->close();
+    }
+} catch (Exception $e) {
+    $searchResults = "Error: " . $e->getMessage();
+}
+
+// 關閉資料庫連接
+$db->close();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -18,7 +77,7 @@
             <!-- Navigation-->
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
                 <div class="container px-5">
-                    <a class="navbar-brand" href="index.html">Start Bootstrap</a>
+                    <a class="navbar-brand" href="index.html">Customize</a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
@@ -26,198 +85,52 @@
                             <li class="nav-item"><a class="nav-link" href="match.php">Match</a></li>
                             <li class="nav-item"><a class="nav-link" href="best_player.php">Best Player</a></li>
                             <li class="nav-item"><a class="nav-link" href="customize.php">Customize</a></li>
-                            <li class="nav-item"><a class="nav-link" href="dream_team.php">Dream team</a></li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" id="navbarDropdownBlog" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Blog</a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownBlog">
-                                    <li><a class="dropdown-item" href="blog-home.html">Blog Home</a></li>
-                                    <li><a class="dropdown-item" href="blog-post.html">Blog Post</a></li>
-                                </ul>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" id="navbarDropdownPortfolio" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Portfolio</a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownPortfolio">
-                                    <li><a class="dropdown-item" href="portfolio-overview.html">Portfolio Overview</a></li>
-                                    <li><a class="dropdown-item" href="portfolio-item.html">Portfolio Item</a></li>
-                                </ul>
-                            </li>
+                            <li class="nav-item"><a class="nav-link" href="Search_Player.php">Search Player</a></li>
+                            <li class="nav-item"><a class="nav-link" href="Insert.php">Insert Player</a></li>
+                            <li class="nav-item"><a class="nav-link" href="Delete.php">Delete Player</a></li>
                         </ul>
                     </div>
                 </div>
             </nav>
-            <!-- Pricing section-->
-            <section class="bg-light py-5">
-                <div class="container px-5 my-5">
-                    <div class="text-center mb-5">
-                        <h1 class="fw-bolder">Pay as you grow</h1>
-                        <p class="lead fw-normal text-muted mb-0">With our no hassle pricing plans</p>
-                    </div>
-                    <div class="row gx-5 justify-content-center">
-                        <!-- Pricing card free-->
-                        <div class="col-lg-6 col-xl-4">
-                            <div class="card mb-5 mb-xl-0">
-                                <div class="card-body p-5">
-                                    <div class="small text-uppercase fw-bold text-muted">Free</div>
-                                    <div class="mb-3">
-                                        <span class="display-4 fw-bold">$0</span>
-                                        <span class="text-muted">/ mo.</span>
-                                    </div>
-                                    <ul class="list-unstyled mb-4">
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-primary"></i>
-                                            <strong>1 users</strong>
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-primary"></i>
-                                            5GB storage
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-primary"></i>
-                                            Unlimited public projects
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-primary"></i>
-                                            Community access
-                                        </li>
-                                        <li class="mb-2 text-muted">
-                                            <i class="bi bi-x"></i>
-                                            Unlimited private projects
-                                        </li>
-                                        <li class="mb-2 text-muted">
-                                            <i class="bi bi-x"></i>
-                                            Dedicated support
-                                        </li>
-                                        <li class="mb-2 text-muted">
-                                            <i class="bi bi-x"></i>
-                                            Free linked domain
-                                        </li>
-                                        <li class="text-muted">
-                                            <i class="bi bi-x"></i>
-                                            Monthly status reports
-                                        </li>
-                                    </ul>
-                                    <div class="d-grid"><a class="btn btn-outline-primary" href="#!">Choose plan</a></div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Pricing card pro-->
-                        <div class="col-lg-6 col-xl-4">
-                            <div class="card mb-5 mb-xl-0">
-                                <div class="card-body p-5">
-                                    <div class="small text-uppercase fw-bold">
-                                        <i class="bi bi-star-fill text-warning"></i>
-                                        Pro
-                                    </div>
-                                    <div class="mb-3">
-                                        <span class="display-4 fw-bold">$9</span>
-                                        <span class="text-muted">/ mo.</span>
-                                    </div>
-                                    <ul class="list-unstyled mb-4">
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-primary"></i>
-                                            <strong>5 users</strong>
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-primary"></i>
-                                            5GB storage
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-primary"></i>
-                                            Unlimited public projects
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-primary"></i>
-                                            Community access
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-primary"></i>
-                                            Unlimited private projects
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-primary"></i>
-                                            Dedicated support
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-primary"></i>
-                                            Free linked domain
-                                        </li>
-                                        <li class="text-muted">
-                                            <i class="bi bi-x"></i>
-                                            Monthly status reports
-                                        </li>
-                                    </ul>
-                                    <div class="d-grid"><a class="btn btn-primary" href="#!">Choose plan</a></div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Pricing card enterprise-->
-                        <div class="col-lg-6 col-xl-4">
-                            <div class="card">
-                                <div class="card-body p-5">
-                                    <div class="small text-uppercase fw-bold text-muted">Enterprise</div>
-                                    <div class="mb-3">
-                                        <span class="display-4 fw-bold">$49</span>
-                                        <span class="text-muted">/ mo.</span>
-                                    </div>
-                                    <ul class="list-unstyled mb-4">
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-primary"></i>
-                                            <strong>Unlimited users</strong>
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-primary"></i>
-                                            5GB storage
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-primary"></i>
-                                            Unlimited public projects
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-primary"></i>
-                                            Community access
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-primary"></i>
-                                            Unlimited private projects
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-primary"></i>
-                                            Dedicated support
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-primary"></i>
-                                            <strong>Unlimited</strong>
-                                            linked domains
-                                        </li>
-                                        <li class="text-muted">
-                                            <i class="bi bi-check text-primary"></i>
-                                            Monthly status reports
-                                        </li>
-                                    </ul>
-                                    <div class="d-grid"><a class="btn btn-outline-primary" href="#!">Choose plan</a></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
-        <!-- Footer-->
-        <footer class="bg-dark py-4 mt-auto">
-            <div class="container px-5">
-                <div class="row align-items-center justify-content-between flex-column flex-sm-row">
-                    <div class="col-auto"><div class="small m-0 text-white">Copyright &copy; Your Website 2023</div></div>
-                    <div class="col-auto">
-                        <a class="link-light small" href="#!">Privacy</a>
-                        <span class="text-white mx-1">&middot;</span>
-                        <a class="link-light small" href="#!">Terms</a>
-                        <span class="text-white mx-1">&middot;</span>
-                        <a class="link-light small" href="#!">Contact</a>
-                    </div>
-                </div>
+            <style>
+            .search-bar-container {
+                background-color: #4ABDAC; /* Teal background */
+                padding: 20px;
+                text-align: center;
+            }
+            .search-bar input[type="text"] {
+                width: 250px; /* Width of the text field */
+            }
+            .search-bar input[type="submit"] {
+                background-color: #FFFFFF; /* White background for the submit button */
+                border: 1px solid #CCCCCC;
+                cursor: pointer;
+            }
+            .search-results {
+                text-align: center;
+                margin-top: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="search-bar-container">
+            <h3>Please Enter your dominant hand and height below</h3>
+            <form class="search-bar" action="" method="post">
+            <select class="form-control" name="handPreference" style="width: auto; display: inline-block;">
+                <option value="L">Left Hand</option>
+                <option value="R">Right Hand</option>
+            </select>    
+                <input class="form-control" type="text" name="height" placeholder="Height" style="display: inline-block;">
+                <input class="btn" type="submit" value="Enter" style="display: inline-block;">
+            </form>
+        </div>
+
+        <?php if ($isPost): ?>
+            <div class="search-results">
+                <h4>Search Results:</h4>
+                <?php echo $searchResults; ?>
             </div>
-        </footer>
-        <!-- Bootstrap core JS-->
+        <?php endif; ?>   
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
         <!-- Core theme JS-->
         <script src="js/scripts.js"></script>
