@@ -1,3 +1,48 @@
+<?php
+// Enable error reporting for mysqli
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+// 連接資料庫
+try {
+    $db = new mysqli("localhost:3307", "user", "", "final");
+
+    // 檢查資料庫連接是否成功
+    if ($db->connect_error) {
+        die("Connection failed: " . $db->connect_error);
+    }
+
+    // 確認是否有 POST 請求
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        // 取得輸入的名字
+        $searchName = $_POST['searchName']; // You don't need to escape this for prepared statements
+
+        // 執行 SQL 查詢，使用预处理语句来防止 SQL 注入
+        $stmt = $db->prepare("SELECT * FROM matches JOIN player ON player.player_id = matches.winner_id OR player.player_id = matches.loser_id WHERE player_name LIKE CONCAT('%', ?, '%')");
+        $stmt->bind_param("s", $searchName);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        // 檢查查詢是否成功
+        if ($result) {
+            // 輸出查詢結果
+            while ($row = $result->fetch_assoc()) {
+                echo "ID: " . htmlspecialchars($row["player_id"]) . " - Name: " . htmlspecialchars($row["player_name"]) . " - Score: " . htmlspecialchars($row["score"]) ."<br>";
+                // 顯示其他欄位...
+            }
+        }
+        // 釋放查詢結果集
+        $result->free();
+        // 關閉预处理语句
+        $stmt->close();
+    }
+} catch (mysqli_sql_exception $e) {
+    die("SQL Error: " . $e->getMessage());
+}
+
+// 關閉資料庫連接
+$db->close();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
