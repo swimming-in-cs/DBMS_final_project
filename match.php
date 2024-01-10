@@ -21,7 +21,7 @@ try {
         $searchName = $_POST['searchName'];
 
         // 執行 SQL 查詢，使用预处理语句来防止 SQL 注入
-        $stmt = $db->prepare("SELECT * FROM player JOIN matches ON player.player_id = matches.winner_id OR player.player_id = matches.loser_id WHERE player_name LIKE CONCAT('%', ?, '%')");
+        $stmt = $db->prepare("SELECT * FROM player JOIN matches ON player.player_id = matches.winner_id OR player.player_id = matches.loser_id WHERE player_name = ?");
         $stmt->bind_param("s", $searchName);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -62,7 +62,7 @@ $db->close();
             <!-- Navigation-->
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
                 <div class="container px-5">
-                    <a class="navbar-brand" href="index.php">Start Bootstrap</a>
+                    <a class="navbar-brand" href="index.php">Match</a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
@@ -70,67 +70,53 @@ $db->close();
                             <li class="nav-item"><a class="nav-link" href="match.php">Match</a></li>
                             <li class="nav-item"><a class="nav-link" href="best_player.php">Best Player</a></li>
                             <li class="nav-item"><a class="nav-link" href="customize.php">Customize</a></li>
-                            <li class="nav-item"><a class="nav-link" href="dream_team.php">Dream team</a></li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" id="navbarDropdownBlog" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Blog</a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownBlog">
-                                    <li><a class="dropdown-item" href="blog-home.html">Blog Home</a></li>
-                                    <li><a class="dropdown-item" href="blog-post.html">Blog Post</a></li>
-                                </ul>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" id="navbarDropdownPortfolio" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Portfolio</a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownPortfolio">
-                                    <li><a class="dropdown-item" href="portfolio-overview.html">Portfolio Overview</a></li>
-                                    <li><a class="dropdown-item" href="portfolio-item.html">Portfolio Item</a></li>
-                                </ul>
-                            </li>
+                            <li class="nav-item"><a class="nav-link" href="Search_Player.php">Search Player</a></li>
+                            <li class="nav-item"><a class="nav-link" href="Insert.php">Insert Player</a></li>
+                            <li class="nav-item"><a class="nav-link" href="Delete.php">Delete Player</a></li>
                         </ul>
                     </div>
                 </div>
             </nav>
-    <style>
-        .search-bar-container {
-            background-color: #4ABDAC; /* Teal background */
-            padding: 20px;
-            text-align: center;
-        }
-        .search-bar input[type="text"] {
-            width: 250px; /* Width of the text field */
-        }
-        .search-bar input[type="submit"] {
-            background-color: #FFFFFF; /* White background for the submit button */
-            border: 1px solid #CCCCCC;
-            cursor: pointer;
-        }
-        .search-results {
-            text-align: center;
-            margin-top: 20px;
-        }
-    </style>
-</head>
-<body>
-    <div class="search-bar-container">
-        <h3>Please fill player below</h3>
-        <form class="search-bar" action="" method="post">
-            <select class="form-control" name="searchType" style="width: auto; display: inline-block;">
-                <option value="ms">ms</option>
-                <!-- Add other options if needed -->
-            </select>
-            <input class="form-control" type="text" name="searchName" placeholder="Search" style="display: inline-block;">
-            <input class="btn" type="submit" value="搜索" style="display: inline-block;">
-        </form>
-    </div>
-
-    <?php if ($isPost): ?>
-        <div class="search-results">
-            <h4>Search Results:</h4>
-            <?php echo $searchResults; ?>
+        <style>
+            .search-bar-container {
+                background-color: #4ABDAC; /* Teal background */
+                padding: 20px;
+                text-align: center;
+            }
+            .search-bar input[type="text"] {
+                width: 250px; /* Width of the text field */
+            }
+            .search-bar input[type="submit"] {
+                background-color: #FFFFFF; /* White background for the submit button */
+                border: 1px solid #CCCCCC;
+                cursor: pointer;
+            }
+            .search-results {
+                text-align: center;
+                margin-top: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="search-bar-container">
+            <h3>Please Enter player name below</h3>
+            <form class="search-bar" action="" method="post">
+                
+                <input class="form-control" type="text" name="searchName" placeholder="Search" style="display: inline-block;">
+                <input class="btn" type="submit" value="搜索" style="display: inline-block;">
+            </form>
         </div>
-    <?php endif; ?>
 
-    <!-- Bootstrap JS and Popper.js -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-</body
+        <?php if ($isPost): ?>
+            <div class="search-results">
+                <h4>Search Results:</h4>
+                <?php echo $searchResults; ?>
+            </div>
+        <?php endif; ?>
+
+        <!-- Bootstrap JS and Popper.js -->
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    </body>
+</html>
