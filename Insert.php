@@ -26,7 +26,9 @@ try {
         $age = $_POST['age'];
     
         // Prepare the SQL statement
-        $sql = "INSERT INTO player (player_id, player_name, player_hand, player_ht, player_ioc, player_age) VALUES (?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO player 
+                (player_id, player_name, player_hand, player_ht, player_ioc, player_age) 
+                VALUES (?, ?, ?, ?, ?, ?)";
     
         // Prepare the statement
         $stmt = $db->prepare($sql);
@@ -55,7 +57,7 @@ $db->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Player Search</title>
+    <title>Insert Player</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     </head>
@@ -75,6 +77,7 @@ $db->close();
                             <li class="nav-item"><a class="nav-link" href="Search_Player.php">Search Player</a></li>
                             <li class="nav-item"><a class="nav-link" href="Insert.php">Insert Player</a></li>
                             <li class="nav-item"><a class="nav-link" href="Delete.php">Delete Player</a></li>
+                            <li class="nav-item"><a class="nav-link" href="Update.php">Update Player</a></li>
                         </ul>
                     </div>
                 </div>
