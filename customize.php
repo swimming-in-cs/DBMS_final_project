@@ -20,7 +20,7 @@ try {
         // 取得輸入的名字
         $height = $_POST['height'];
         $handPreference = $_POST['handPreference'];
-        $sql="Select player.player_name, player.player_ht, count(*) as cnt
+        $sql="Select player_name, player_ht, player_hand, count(*) as cnt
                 From matches, player, tournerment
                 where matches.winner_id=player.player_id
                 and matches.tourney_id=tournerment.tourney_id
@@ -29,7 +29,7 @@ try {
                 Group by player_name
                 order by cnt desc
                 limit 3;";
-        // 執行 SQL 查詢，使用预处理语句来防止 SQL 注入
+        
         $stmt = $db->prepare($sql);
         $stmt->bind_param("is", $height, $handPreference);
         $stmt->execute();
@@ -39,7 +39,7 @@ try {
         if ($result) {
             // 輸出查詢結果
             while ($row = $result->fetch_assoc()) {
-                $searchResults .= "Name: " . htmlspecialchars($row["player_name"]) . " - Player Height: " . htmlspecialchars($row["player_ht"]) . " - Number of wins: " . htmlspecialchars($row["cnt"]) .  "<br>";
+                $searchResults .= "Name: " . htmlspecialchars($row["player_name"]) . " - Player Height: " . htmlspecialchars($row["player_ht"]) ." - Player Hand: " . htmlspecialchars($row["player_hand"]) . " - Number of wins: " . htmlspecialchars($row["cnt"]) .  "<br>";
             }
         } else {
             $searchResults = "Query failed: " . $db->error;
@@ -64,7 +64,7 @@ $db->close();
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>Modern Business - Start Bootstrap Template</title>
+        <title>Customized Player Search</title>
         <!-- Favicon-->
         <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
         <!-- Bootstrap icons-->
@@ -88,6 +88,7 @@ $db->close();
                             <li class="nav-item"><a class="nav-link" href="Search_Player.php">Search Player</a></li>
                             <li class="nav-item"><a class="nav-link" href="Insert.php">Insert Player</a></li>
                             <li class="nav-item"><a class="nav-link" href="Delete.php">Delete Player</a></li>
+                            <li class="nav-item"><a class="nav-link" href="Update.php">Update Player</a></li>
                         </ul>
                     </div>
                 </div>
