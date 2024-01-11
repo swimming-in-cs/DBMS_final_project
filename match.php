@@ -19,9 +19,12 @@ try {
     if ($isPost) {
         // 取得輸入的名字
         $searchName = $_POST['searchName'];
-
-        // 執行 SQL 查詢，使用预处理语句来防止 SQL 注入
-        $stmt = $db->prepare("SELECT * FROM player JOIN matches ON player.player_id = matches.winner_id OR player.player_id = matches.loser_id WHERE player_name = ?");
+        $sql = "SELECT * FROM player 
+                JOIN matches ON player.player_id = matches.winner_id 
+                OR player.player_id = matches.loser_id 
+                WHERE player_name = ?";
+        
+        $stmt = $db->prepare($sql);
         $stmt->bind_param("s", $searchName);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -53,7 +56,7 @@ $db->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Player Search</title>
+    <title>Match Search</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     </head>
@@ -73,6 +76,7 @@ $db->close();
                             <li class="nav-item"><a class="nav-link" href="Search_Player.php">Search Player</a></li>
                             <li class="nav-item"><a class="nav-link" href="Insert.php">Insert Player</a></li>
                             <li class="nav-item"><a class="nav-link" href="Delete.php">Delete Player</a></li>
+                            <li class="nav-item"><a class="nav-link" href="Update.php">Update Player</a></li>
                         </ul>
                     </div>
                 </div>
