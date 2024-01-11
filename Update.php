@@ -26,7 +26,10 @@ try {
         $age = $_POST['age'];
     
         // Prepare the SQL update statement
-        $sql = "UPDATE player SET player_name = ?, player_hand = ?, player_ht = ?, player_ioc = ?, player_age = ? WHERE player_id = ?";
+        $sql = "UPDATE player SET player_name = ?,
+                player_hand = ?, player_ht = ?, 
+                player_ioc = ?, player_age = ? 
+                WHERE player_id = ?";
 
         // Prepare the statement
         $stmt = $db->prepare($sql);
@@ -56,7 +59,7 @@ $db->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Player Search</title>
+    <title>Update Player</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     </head>
