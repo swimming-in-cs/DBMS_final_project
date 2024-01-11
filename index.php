@@ -17,7 +17,7 @@ $db->close();
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>Modern Business - Start Bootstrap Template</title>
+        <title>Professional Tennis Analysis</title>
         <!-- Favicon-->
         <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
         <!-- Bootstrap icons-->
@@ -41,6 +41,7 @@ $db->close();
                             <li class="nav-item"><a class="nav-link" href="Search_Player.php">Search Player</a></li>
                             <li class="nav-item"><a class="nav-link" href="Insert.php">Insert Player</a></li>
                             <li class="nav-item"><a class="nav-link" href="Delete.php">Delete Player</a></li>
+                            <li class="nav-item"><a class="nav-link" href="Update.php">Update Player</a></li>
                         </ul>
                     </div>
                 </div>
