@@ -1,1 +1,1 @@
-This is our Introduction to Database System final project
+This is our Intro. to Database System final project
